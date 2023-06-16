@@ -27,5 +27,6 @@ class VacationController extends Controller
         ]);
 
         return redirect()->back();
+        
     }
 }
