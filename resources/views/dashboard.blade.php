@@ -1,4 +1,4 @@
-@dump(Auth::user()->name)
+<!--@dump(Auth::user()->name)-->
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -23,16 +23,11 @@
                     <form name="vacations" id="vacations" method="post" enctype="multipart/form-data" action="{{route('show_vacations')}}">
                     @csrf
                         <div class="form-group mt-3 text-center">
-                            <button type="submit" class="btn btn-primary shadow-lg" name="showvacations" value="show">Посмотреть даты своих отпусков</button>
+                            <button type="submit" class="btn btn-primary shadow-lg" name="showvacations" value="show">Посмотреть даты отпусков</button>
                         </div>
                     </form>
 
-                    <form name="vacations" id="vacations" method="post" enctype="multipart/form-data" action="{{route('show_vacations')}}">
-                    @csrf
-                        <div class="form-group mt-3 text-center">
-                            <button type="submit" class="btn btn-primary shadow-lg" name="showvacations" value="show">Посмотреть даты отпусков всех сотрудников</button>
-                        </div>
-                    </form>
+
                 </div>
             </div>
         </div>

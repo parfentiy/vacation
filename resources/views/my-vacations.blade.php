@@ -1,5 +1,10 @@
 
 <x-app-layout>
+<x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -7,126 +12,75 @@
                 <div class="p-6 text-gray-900">
 
 
-                <table class="container d-flex flex-row justify-content-center" style="border: 1px solid white; border-collapse: collapse">
-    <tr>
-        <th style="border: 1px solid; text-align: center;">Заказ №</th>
-        <th style="border: 1px solid; text-align: center;">Дата заказа</th>
-        <th style="border: 1px solid; text-align: center; ">Оплачено клиентом</th>
-        <th style="border: 1px solid; text-align: center; ">Оплачено Гене</th>
-        <th style="border: 1px solid; text-align: center; ">Отгружено</th>
-        <th style="border: 1px solid; text-align: center; ">Клиент</th>
-        <th style="border: 1px solid; text-align: center; ">Сумма клиенту</th>
-        <th style="border: 1px solid; text-align: center; ">Себест. заказа</th>
-        <th style="border: 1px solid; text-align: center; ">Доход</th>
-        <th style="border: 1px solid; text-align: center; ">Очки</th>
+                    <table style="border: 1px solid white; border-collapse: collapse">
+                        <tr>
+                            <th style="border: 1px solid; text-align: center;">ФИО сотрудника</th>
+                            <th style="border: 1px solid; text-align: center;">Дата начала</th>
+                            <th style="border: 1px solid; text-align: center; ">Дата окончания</th>
+                            <th style="border: 1px solid; text-align: center; ">Подтвержден</th>
+                            
 
-    </tr>
-    @php
-        $totalSold = 0;
-        $totalCost = 0;
-        $totalIncome = 0;
-        $totalVP = 0;
-    @endphp
-    @foreach($orders as $order)
-        <tr>
-            <form name="edit_order" method="post" action="{{ url('/edit_order') }}">
-                @csrf
-                @php
-                    $totalSold += $order['customerSum'];
-                    $totalCost += $order['costSum'];
-                    $totalIncome += round($order['income'], 2);
-                    $totalVP += $order['vp_total'];
-                @endphp
-                <td style="border: 1px solid; text-align: center;">{{$order['id']}}</td>
-                <td style="border: 1px solid; text-align: center;">{{!is_null($order['order_date']) ? date("d.m.Y", strtotime($order['order_date'])) : ""}}</td>
-                <td style="border: 1px solid; text-align: center;">{{!is_null($order['paid_date']) ? date("d.m.Y", strtotime($order['paid_date'])) : ""}}</td>
-                <td style="border: 1px solid; text-align: center;">{{!is_null($order['gena_date']) ? date("d.m.Y", strtotime($order['gena_date'])) : ""}}</td>
-                <td style="border: 1px solid; text-align: center;">{{!is_null($order['ship_date']) ? date("d.m.Y", strtotime($order['ship_date'])) : ""}}</td>
-                <td style="border: 1px solid; text-align: center;">{{$order['customer']}}</td>
-                <td style="border: 1px solid; text-align: center;">{{$order['customerSum']}} р.</td>
-                <td style="border: 1px solid; text-align: center;">{{$order['costSum']}} р.</td>
-                <td style="border: 1px solid; text-align: center;">{{round($order['income'], 2)}} р.</td>
-                <td style="border: 1px solid; text-align: center;">{{$order['vp_total']}}</td>
+                        </tr>
+                        @foreach($myVacations as $myVacation)
+                            <tr>
+                                <form name="plan_vacation" method="post" action="{{route('update_vacation')}}">
+                                    @csrf
+                                    <input type="hidden" name="user_id" value="{{$myVacation['user_id']}}">
+                                    <td style="border: 1px solid; text-align: center;">{{\App\Models\Vacation::find($myVacation['id'])->user->name}}</td>
+                                    <td style="border: 1px solid; text-align: center;">
+                                        <input type="date" name="start_date" value="{{$myVacation['start_date']}}">
+                                    </td>
+                                    <td style="border: 1px solid; text-align: center;">
+                                        <input type="date" name="end_date" value="{{$myVacation['end_date']}}">
+                                    </td>
+                                    <td style="border: 1px solid; text-align: center;">
+                                        @if (Auth::user()->is_admin)
+                                            <select name="is_confirmed" id="is_confirmed">
+                                                    @if ($myVacation['is_confirmed'])
+                                                        <option value="true">Подтвердить</option>
+                                                        <option value="false" selected>Отменить отпуск</option>
+                                                    @else
+                                                        <option value="true" selected>Подтвердить</option>
+                                                        <option value="false">Отменить отпуск</option>
+                                                    @endif
+                                            </select>
+                                        @else
+                                            {{$myVacation['is_confirmed'] ? "Да" : "Нет"}}
+                                        @endif
+                                    </td>
+                                        <td style="border: 1px solid; text-align: center;">
+                                            <button class="btn btn-primary btn-sm" type="submit" name="vacation_id" value="{{$myVacation['id']}}">   Сохранить   </button>
+                                        </td>
+                                </form>
+                                <form name="delete_vacation" method="post" action="{{route('delete_vacation')}}">
+                                    <td style="border: 1px solid; text-align: center;">
 
-                <td style="border: 1px solid; text-align: center;">
-                    <input type="hidden" name="period" value="{{$period}}">
-                    <button class="btn btn-primary btn-sm" type="submit" name="edit" value="{{$order['id']}}">   Детали   </button>
-                </td>
-            </form>
-            <form name="delete_order" method="post" action="{{ url('/delete_order') }}">
-                <td style="border: 1px solid; text-align: center;">
+                                            @csrf
+                                            <button class="btn btn-primary btn-sm" type="submit" name="vacation_id" value="{{$myVacation['id']}}">Удалить</button>
+                                        </form>
+                                    </td>
+                            </tr>
+                        @endforeach
+                        <tr>
+                            <form name="plan_vacation" method="post" action="{{route('plan_vacation')}}">
+                                @csrf
 
-                        @csrf
-                        <input type="hidden" name="period" value="{{$period}}">
-                        <button class="btn btn-primary btn-sm" type="submit" name="delete" value="{{$order['id']}}">Удалить</button>
-                    </form>
-                </td>
-        </tr>
-    @endforeach
-    <tr>
-        <td style="border: 1px solid; text-align: center;"></td>
-        <td style="border: 1px solid; text-align: center;"><b>ИТОГО</b></td>
-        <td style="border: 1px solid; text-align: center;"></td>
-        <td style="border: 1px solid; text-align: center;"></td>
-        <td style="border: 1px solid; text-align: center;"></td>
-        <td style="border: 1px solid; text-align: center;"></td>
-        <td style="border: 1px solid; text-align: center;"><b>{{$totalSold}} р.</b></td>
-        <td style="border: 1px solid; text-align: center;"><b>{{$totalCost}} р.</b></td>
-        <td style="border: 1px solid; text-align: center;"><b>{{$totalIncome}} р.</b></td>
-        <td style="border: 1px solid; text-align: center;"><b>{{$totalVP}}</b></td>
-    </tr>
-    <tr>
-        <form name="new_order" method="post" action="{{ url('add_order') }}">
-            @csrf
+                                <td class="p-2" style="border: 1px solid;">
+                                </td>
+                                <td class="p-2"  style="border: 1px solid;">
+                                    <input type="date" name="start_date" required></button>
+                                </td>
+                                <td class="p-2" style="border: 1px solid;">
+                                    <input type="date" name="end_date" required></button>
+                                </td>
+                                <td class="p-2" style="border: 1px solid;">
+                                </td>
+                                <td class="p-2" style="border: 1px solid;">
+                                    <button type="submit" class="btn btn-primary btn-sm" name="user_id" value="{{Auth::user()->id}}">Запланировать отпуск</button>
+                                </td>
+                            </form>
 
-            <td class="p-2" style="border: 1px solid;">
-
-            </td>
-            <td class="p-2"  style="border: 1px solid;">
-                @php
-                    $time=strtotime(now());
-                    $day=date("d",$time);
-                    $month=date("m",$time);
-                    $year=date("Y",$time);
-                @endphp
-                <label for="order_date"></label>
-                <input type="date" id="order_date" name="order_date"
-                       value="{{$year}}-{{$month}}-{{$day}}" required>
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-                <select name="customer" id="customer">
-                    @foreach($customers as $customer)
-                        <option value="{{$customer['id']}}">{{$customer['name']}}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-                <select name="pricelist" id="pricelist">
-                    @foreach($pricelists as $pricelist)
-                        <option value="{{$pricelist['id']}}">{{$pricelist['name']}}</option>
-                    @endforeach
-                </select>
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-
-            </td>
-            <td class="p-2" style="border: 1px solid;">
-
-            </td>
-
-            <td class="p-2" style="border: 1px solid;">
-                <button type="submit" class="btn btn-primary btn-sm" name="period" value="{{$period}}">+ заказ</button>
-            </td>
-        </form>
-
-</table>
+                    </table>
 
 
 

@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/show_vacations', [VacationController::class, 'showVacations'])->name('show_vacations');
     Route::post('/plan_vacation', [VacationController::class, 'saveVacation'])->name('plan_vacation');
+    Route::post('/update_vacation', [VacationController::class, 'updateVacation'])->name('update_vacation');
+    Route::post('/delete_vacation', [VacationController::class, 'deleteVacation'])->name('delete_vacation');
 
 });
 
