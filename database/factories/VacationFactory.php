@@ -16,7 +16,16 @@ class VacationFactory extends Factory
      */
     public function definition(): array
     {
+        $startDate = fake()->dateTimeThisYear("-30 days");
+        $endDate = (clone $startDate)->modify("+14 day");
+        $startDate = $startDate->format('Y-m-d');
+        $endDate = $endDate->format('Y-m-d');
+
         return [
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'is_confirmed' => fake()->numberBetween(0, 1),
+            'user_id' => fake()->numberBetween(1, \App\Models\User::all()->count()),
             //
         ];
     }

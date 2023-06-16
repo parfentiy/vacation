@@ -28,10 +28,18 @@
                                     <input type="hidden" name="user_id" value="{{$myVacation['user_id']}}">
                                     <td style="border: 1px solid; text-align: center;">{{\App\Models\Vacation::find($myVacation['id'])->user->name}}</td>
                                     <td style="border: 1px solid; text-align: center;">
-                                        <input type="date" name="start_date" value="{{$myVacation['start_date']}}">
+                                        @if (!Auth::user()->is_admin && $myVacation['is_confirmed'])
+                                            {{date("d.m.Y", strtotime($myVacation['start_date']))}}
+                                        @else
+                                            <input type="date" name="start_date" value="{{$myVacation['start_date']}}">
+                                        @endif
                                     </td>
                                     <td style="border: 1px solid; text-align: center;">
-                                        <input type="date" name="end_date" value="{{$myVacation['end_date']}}">
+                                        @if (!Auth::user()->is_admin && $myVacation['is_confirmed'])
+                                            {{date("d.m.Y", strtotime($myVacation['end_date']))}}
+                                        @else
+                                            <input type="date" name="end_date" value="{{$myVacation['end_date']}}">
+                                        @endif
                                     </td>
                                     <td style="border: 1px solid; text-align: center;">
                                         @if (Auth::user()->is_admin)
@@ -49,7 +57,12 @@
                                         @endif
                                     </td>
                                         <td style="border: 1px solid; text-align: center;">
-                                            <button class="btn btn-primary btn-sm" type="submit" name="vacation_id" value="{{$myVacation['id']}}">   Сохранить   </button>
+                                            @if (!Auth::user()->is_admin && $myVacation['is_confirmed'])
+                                                <button class="btn btn-primary btn-sm" type="submit" name="vacation_id" value="{{$myVacation['id']}}" disabled>   Сохранить   </button>
+                                            @else
+                                                <button class="btn btn-primary btn-sm" type="submit" name="vacation_id" value="{{$myVacation['id']}}">   Сохранить   </button>
+                                            @endif
+
                                         </td>
                                 </form>
                                 <form name="delete_vacation" method="post" action="{{route('delete_vacation')}}">
@@ -76,7 +89,7 @@
                                 <td class="p-2" style="border: 1px solid;">
                                 </td>
                                 <td class="p-2" style="border: 1px solid;">
-                                    <button type="submit" class="btn btn-primary btn-sm" name="user_id" value="{{Auth::user()->id}}">Запланировать отпуск</button>
+                                    <button type="submit" class="btn btn-primary btn-sm" name="user_id" value="{{Auth::user()->id}}">Запланировать себе отпуск</button>
                                 </td>
                             </form>
 

@@ -20,7 +20,6 @@ class RegisteredUserController extends Controller
      */
     public function create(): View
     {
-        //dd(request());
         return view('auth.register');
     }
 
@@ -31,7 +30,6 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        dump($request->is_admin);
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
